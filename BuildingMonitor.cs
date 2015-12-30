@@ -289,8 +289,8 @@ namespace SkylinesOverwatch
         private int[] GetFrameBoundaries(int index)
         {
             int frame = (int)(index & 255);
-            int frame_first = frame * 128;
-            int frame_last = (frame + 1) * 128 - 1;
+            int frame_first = frame * 192;
+            int frame_last = (frame + 1) * 192 - 1;
 
             return new int[2] { frame_first, frame_last };
         }
@@ -481,7 +481,7 @@ namespace SkylinesOverwatch
 
         private bool CheckGarbage()
         {
-            if (_building.Info.m_buildingAI.GetGarbageAmount(_id, ref _building) > 2500)
+            if (_building.Info.m_buildingAI.GetGarbageAmount(_id, ref _building) > 2500 && !(_building.Info.m_buildingAI is LandfillSiteAI))
             {
                 _data._BuildingsWithGarbage.Add(_id);
                 return true;
