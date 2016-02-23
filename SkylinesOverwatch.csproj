@@ -69,8 +69,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mkdir "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)"
-del "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)\$(TargetFileName)"
-xcopy /y "$(TargetPath)" "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

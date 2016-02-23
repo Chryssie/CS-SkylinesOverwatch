@@ -1,12 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-
-using ICities;
-using ColossalFramework;
-using ColossalFramework.Math;
-using ColossalFramework.UI;
-using UnityEngine;
 
 namespace SkylinesOverwatch
 {
