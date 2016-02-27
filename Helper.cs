@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Reflection;
-
-using ICities;
-using ColossalFramework;
-using ColossalFramework.Plugins;
-using ColossalFramework.Math;
-using ColossalFramework.UI;
+﻿using ColossalFramework.Plugins;
+using System;
 using UnityEngine;
 
 namespace SkylinesOverwatch
@@ -63,9 +55,9 @@ namespace SkylinesOverwatch
         internal bool HumanMonitorSpinnable     { get { return GameLoaded; } }
         internal bool AnimalMonitorSpinnable    { get { return BuildingMonitorSpun; } }
 
-        internal BuildingMonitor BuildingMonitor;
+        internal BuildingMonitor BuildingMonitor = null;
         internal VehicleMonitor VehicleMonitor;
-        internal AnimalMonitor AnimalMonitor;
+        internal AnimalMonitor AnimalMonitor = null;
         internal HumanMonitor HumanMonitor;
 
         public void RequestBuildingRemoval(ushort id)

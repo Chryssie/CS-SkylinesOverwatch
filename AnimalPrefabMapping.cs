@@ -5,20 +5,12 @@ namespace SkylinesOverwatch
 {
     public class AnimalPrefabMapping
     {
-        private Settings _settings;
-        private Helper _helper;
-        private Data _data;
-
         private Dictionary<string, int> _prefabs;
 
         private PrefabMapping<ushort> _mapping;
 
         public AnimalPrefabMapping()
         {
-            _settings = Settings.Instance;
-            _helper = Helper.Instance;
-            _data = Data.Instance;
-
             _prefabs = new Dictionary<string, int>();
             LoadTrackedPrefabs();
 
@@ -49,7 +41,7 @@ namespace SkylinesOverwatch
                 if (String.IsNullOrEmpty(name))
                     continue;
 
-                if (!_settings.Animals.Contains(name))
+                if (!Settings.Instance.Animals.Contains(name))
                     continue;
 
                 if (_prefabs.ContainsKey(name))
@@ -73,47 +65,47 @@ namespace SkylinesOverwatch
 
             if (ai is AnimalAI)
             {
-                _mapping.AddMapping(prefabID, _data._Animals);
+                _mapping.AddMapping(prefabID, Data.Instance._Animals);
 
                 if (ai is BirdAI)
                 {
-                    _mapping.AddMapping(prefabID, _data._Birds);
+                    _mapping.AddMapping(prefabID, Data.Instance._Birds);
 
                     if (_prefabs.ContainsKey("Seagull") && _prefabs["Seagull"] == prefabID)
-                        _mapping.AddMapping(prefabID, _data._Seagulls);
+                        _mapping.AddMapping(prefabID, Data.Instance._Seagulls);
                 }
                 else if (ai is LivestockAI)
                 {
-                    _mapping.AddMapping(prefabID, _data._Livestock);
+                    _mapping.AddMapping(prefabID, Data.Instance._Livestock);
 
                     if (_prefabs.ContainsKey("Cow") && _prefabs["Cow"] == prefabID)
-                        _mapping.AddMapping(prefabID, _data._Cows);
+                        _mapping.AddMapping(prefabID, Data.Instance._Cows);
 
                     if (_prefabs.ContainsKey("Pig") && _prefabs["Pig"] == prefabID)
-                        _mapping.AddMapping(prefabID, _data._Pigs);
+                        _mapping.AddMapping(prefabID, Data.Instance._Pigs);
                 }
                 else if (ai is PetAI)
                 {
-                    _mapping.AddMapping(prefabID, _data._Pets);
+                    _mapping.AddMapping(prefabID, Data.Instance._Pets);
 
                     if (_prefabs.ContainsKey("Dog") && _prefabs["Dog"] == prefabID)
-                        _mapping.AddMapping(prefabID, _data._Dogs);
+                        _mapping.AddMapping(prefabID, Data.Instance._Dogs);
                 }
                 else if (ai is WildlifeAI)
                 {
-                    _mapping.AddMapping(prefabID, _data._Wildlife);
+                    _mapping.AddMapping(prefabID, Data.Instance._Wildlife);
 
                     if (_prefabs.ContainsKey("Wolf") && _prefabs["Wolf"] == prefabID)
-                        _mapping.AddMapping(prefabID, _data._Wolves);
+                        _mapping.AddMapping(prefabID, Data.Instance._Wolves);
 
                     if (_prefabs.ContainsKey("Bear") && _prefabs["Bear"] == prefabID)
-                        _mapping.AddMapping(prefabID, _data._Bears);
+                        _mapping.AddMapping(prefabID, Data.Instance._Bears);
 
                     if (_prefabs.ContainsKey("Moose") && _prefabs["Moose"] == prefabID)
-                        _mapping.AddMapping(prefabID, _data._Moose);
+                        _mapping.AddMapping(prefabID, Data.Instance._Moose);
                 }
                 else
-                    _mapping.AddMapping(prefabID, _data._AnimalOther);
+                    _mapping.AddMapping(prefabID, Data.Instance._AnimalOther);
             }
         }
     }

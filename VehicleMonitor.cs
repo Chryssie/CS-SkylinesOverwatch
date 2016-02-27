@@ -1,29 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-
+﻿using ColossalFramework;
 using ICities;
-using ColossalFramework;
-using ColossalFramework.Math;
-using ColossalFramework.UI;
-using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 namespace SkylinesOverwatch
 {
     public class VehicleMonitor : ThreadingExtensionBase
     {
-        private Settings _settings;
-        private Helper _helper;
-        private Data _data;
-
         private VehiclePrefabMapping _mapping;
 
         private bool _initialized;
         private bool _terminated;
         private bool _paused;
         private int _lastProcessedFrame;
-
-        private VehicleManager _instance;
+        
         private int _capacity;
 
         private Vehicle _vehicle;
@@ -32,9 +22,6 @@ namespace SkylinesOverwatch
 
         public override void OnCreated(IThreading threading)
         {
-            _settings = Settings.Instance;
-            _helper = Helper.Instance;
-
             _initialized = false;
             _terminated = false;
 
@@ -45,7 +32,7 @@ namespace SkylinesOverwatch
         {
             if (_terminated) return;
 
-            if (!_helper.VehicleMonitorSpun)
+            if (!Helper.Instance.VehicleMonitorSpun)
             {
                 _initialized = false;
                 return;
@@ -83,35 +70,32 @@ namespace SkylinesOverwatch
         {
             if (_terminated) return;
 
-            if (!_helper.VehicleMonitorSpinnable) return;
+            if (!Helper.Instance.VehicleMonitorSpinnable) return;
 
-            if (!_settings.Enable._VehicleMonitor) return;
+            if (!Settings.Instance.Enable._VehicleMonitor) return;
 
             try
             {
                 if (!_initialized)
                 {
-                    _data = Data.Instance;
-
                     _mapping = new VehiclePrefabMapping();
 
                     _paused = false;
-
-                    _instance = Singleton<VehicleManager>.instance;
-                    _capacity = _instance.m_vehicles.m_buffer.Length;
+                    
+                    _capacity = Singleton<VehicleManager>.instance.m_vehicles.m_buffer.Length;
 
                     _id = (ushort)_capacity;
 
                     _initialized = true;
-                    _helper.VehicleMonitorSpun = true;
-                    _helper.VehicleMonitor = this;
+                    Helper.Instance.VehicleMonitorSpun = true;
+                    Helper.Instance.VehicleMonitor = this;
 
-                    _helper.NotifyPlayer("Vehicle monitor initialized");
+                    Helper.Instance.NotifyPlayer("Vehicle monitor initialized");
                 }
                 else if (!SimulationManager.instance.SimulationPaused)
                 {
-                    _data._VehiclesUpdated.Clear();
-                    _data._VehiclesRemoved.Clear();
+                    Data.Instance._VehiclesUpdated.Clear();
+                    Data.Instance._VehiclesRemoved.Clear();
 
                     int end = GetFrame();
 
@@ -127,10 +111,10 @@ namespace SkylinesOverwatch
                             id = (ushort)i;
 
                             if (UpdateVehicle(id))
-                                _data._VehiclesUpdated.Add(id);
-                            else if (_data._Vehicles.Contains(id))
+                                Data.Instance._VehiclesUpdated.Add(id);
+                            else if (Data.Instance._Vehicles.Contains(id))
                             {
-                                _data._VehiclesRemoved.Add(id);
+                                Data.Instance._VehiclesRemoved.Add(id);
                                 RemoveVehicle(id);
                             }
                         }
@@ -147,7 +131,7 @@ namespace SkylinesOverwatch
                 error += "==== STACK TRACE ====\r\n";
                 error += e.StackTrace;
 
-                _helper.Log(error);
+                Helper.Instance.Log(error);
 
                 _terminated = true;
             }
@@ -161,26 +145,26 @@ namespace SkylinesOverwatch
             _terminated = false;
             _paused = false;
 
-            _helper.VehicleMonitorSpun = false;
-            _helper.VehicleMonitor = null;
+            Helper.Instance.VehicleMonitorSpun = false;
+            Helper.Instance.VehicleMonitor = null;
 
-            if (_data != null)
+            if (Data.Instance != null)
             {
-                _data._Vehicles.Clear();
+                Data.Instance._Vehicles.Clear();
 
-                _data._Cars.Clear();
-                _data._Trains.Clear();
-                _data._Aircraft.Clear();
-                _data._Ships.Clear();
-                _data._VehicleOther.Clear();
+                Data.Instance._Cars.Clear();
+                Data.Instance._Trains.Clear();
+                Data.Instance._Aircraft.Clear();
+                Data.Instance._Ships.Clear();
+                Data.Instance._VehicleOther.Clear();
 
-                _data._Hearses.Clear();
-                _data._GarbageTrucks.Clear();
-                _data._FireTrucks.Clear();
-                _data._PoliceCars.Clear();
-                _data._Ambulances.Clear();
-                _data._Buses.Clear();
-                _data._CarOther.Clear();
+                Data.Instance._Hearses.Clear();
+                Data.Instance._GarbageTrucks.Clear();
+                Data.Instance._FireTrucks.Clear();
+                Data.Instance._PoliceCars.Clear();
+                Data.Instance._Ambulances.Clear();
+                Data.Instance._Buses.Clear();
+                Data.Instance._CarOther.Clear();
             }
 
             base.OnReleased();
@@ -217,7 +201,7 @@ namespace SkylinesOverwatch
 
         private bool GetVehicle()
         {
-            _vehicle = _instance.m_vehicles.m_buffer[(int)_id];
+            _vehicle = Singleton<VehicleManager>.instance.m_vehicles.m_buffer[(int)_id];
 
             if (_vehicle.m_leadingVehicle != 0)
                 return false;
@@ -262,30 +246,30 @@ namespace SkylinesOverwatch
 
         private void RemoveVehicle(ushort id)
         {
-            _data._Vehicles.Remove(id);
+            Data.Instance._Vehicles.Remove(id);
 
-            _data._Cars.Remove(id);
-            _data._Trains.Remove(id);
-            _data._Aircraft.Remove(id);
-            _data._Ships.Remove(id);
-            _data._VehicleOther.Remove(id);
+            Data.Instance._Cars.Remove(id);
+            Data.Instance._Trains.Remove(id);
+            Data.Instance._Aircraft.Remove(id);
+            Data.Instance._Ships.Remove(id);
+            Data.Instance._VehicleOther.Remove(id);
 
-            _data._Hearses.Remove(id);
-            _data._GarbageTrucks.Remove(id);
-            _data._FireTrucks.Remove(id);
-            _data._PoliceCars.Remove(id);
-            _data._Ambulances.Remove(id);
-            _data._Buses.Remove(id);
-            _data._CarOther.Remove(id);
+            Data.Instance._Hearses.Remove(id);
+            Data.Instance._GarbageTrucks.Remove(id);
+            Data.Instance._FireTrucks.Remove(id);
+            Data.Instance._PoliceCars.Remove(id);
+            Data.Instance._Ambulances.Remove(id);
+            Data.Instance._Buses.Remove(id);
+            Data.Instance._CarOther.Remove(id);
         }
 
         private void OutputDebugLog()
         {
-            if (!_helper.VehicleMonitorSpun) return;
+            if (!Helper.Instance.VehicleMonitorSpun) return;
 
-            if (!_settings.Debug._VehicleMonitor) return;
+            if (!Settings.Instance.Debug._VehicleMonitor) return;
 
-            if (!_settings.Enable._VehicleMonitor) return;
+            if (!Settings.Instance.Enable._VehicleMonitor) return;
 
             if (!_initialized) return;
 
@@ -296,31 +280,31 @@ namespace SkylinesOverwatch
             string log = "\r\n";
             log += "==== VEHICLES ====\r\n";
             log += "\r\n";
-            log += String.Format("{0}   Total\r\n", _data._Vehicles.Count);
-            log += String.Format("{0}   Updated\r\n", _data._VehiclesUpdated.Count);
-            log += String.Format("{0}   Removed\r\n", _data._VehiclesRemoved.Count);
+            log += String.Format("{0}   Total\r\n", Data.Instance._Vehicles.Count);
+            log += String.Format("{0}   Updated\r\n", Data.Instance._VehiclesUpdated.Count);
+            log += String.Format("{0}   Removed\r\n", Data.Instance._VehiclesRemoved.Count);
             log += "\r\n";
-            log += String.Format("{0}   Car(s)\r\n", _data._Cars.Count);
-            log += String.Format(" =>   {0}   Hearse(s)\r\n", _data._Hearses.Count);
-            log += String.Format(" =>   {0}   Garbage Truck(s)\r\n", _data._GarbageTrucks.Count);
-            log += String.Format(" =>   {0}   Fire Truck(s)\r\n", _data._FireTrucks.Count);
-            log += String.Format(" =>   {0}   Police Car(s)\r\n", _data._PoliceCars.Count);
-            log += String.Format(" =>   {0}   Ambulance(s)\r\n", _data._Ambulances.Count);
-            log += String.Format(" =>   {0}   Bus(s)\r\n", _data._Buses.Count);
-            log += String.Format(" =>   {0}   Other\r\n", _data._CarOther.Count);
+            log += String.Format("{0}   Car(s)\r\n", Data.Instance._Cars.Count);
+            log += String.Format(" =>   {0}   Hearse(s)\r\n", Data.Instance._Hearses.Count);
+            log += String.Format(" =>   {0}   Garbage Truck(s)\r\n", Data.Instance._GarbageTrucks.Count);
+            log += String.Format(" =>   {0}   Fire Truck(s)\r\n", Data.Instance._FireTrucks.Count);
+            log += String.Format(" =>   {0}   Police Car(s)\r\n", Data.Instance._PoliceCars.Count);
+            log += String.Format(" =>   {0}   Ambulance(s)\r\n", Data.Instance._Ambulances.Count);
+            log += String.Format(" =>   {0}   Bus(s)\r\n", Data.Instance._Buses.Count);
+            log += String.Format(" =>   {0}   Other\r\n", Data.Instance._CarOther.Count);
             log += "\r\n";
-            log += String.Format("{0}   Train(s)\r\n", _data._Trains.Count);
-            log += String.Format(" =>   {0}   Passenger Train(s)\r\n", _data._PassengerTrains.Count);
-            log += String.Format(" =>   {0}   Metro Train(s)\r\n", _data._MetroTrains.Count);
-            log += String.Format(" =>   {0}   Cargo Train(s)\r\n", _data._CargoTrains.Count);
-            log += String.Format(" =>   {0}   Other\r\n", _data._TrainOther.Count);
+            log += String.Format("{0}   Train(s)\r\n", Data.Instance._Trains.Count);
+            log += String.Format(" =>   {0}   Passenger Train(s)\r\n", Data.Instance._PassengerTrains.Count);
+            log += String.Format(" =>   {0}   Metro Train(s)\r\n", Data.Instance._MetroTrains.Count);
+            log += String.Format(" =>   {0}   Cargo Train(s)\r\n", Data.Instance._CargoTrains.Count);
+            log += String.Format(" =>   {0}   Other\r\n", Data.Instance._TrainOther.Count);
             log += "\r\n";
-            log += String.Format("{0}   Aircraft\r\n", _data._Aircraft.Count);
-            log += String.Format("{0}   Ship(s)\r\n", _data._Ships.Count);
-            log += String.Format("{0}   Other\r\n", _data._VehicleOther.Count);
+            log += String.Format("{0}   Aircraft\r\n", Data.Instance._Aircraft.Count);
+            log += String.Format("{0}   Ship(s)\r\n", Data.Instance._Ships.Count);
+            log += String.Format("{0}   Other\r\n", Data.Instance._VehicleOther.Count);
             log += "\r\n";
 
-            _helper.Log(log);
+            Helper.Instance.Log(log);
 
             _paused = true;
         }

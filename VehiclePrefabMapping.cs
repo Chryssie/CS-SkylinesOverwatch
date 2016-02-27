@@ -1,29 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-
-using ICities;
-using ColossalFramework;
-using ColossalFramework.Math;
-using ColossalFramework.UI;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 namespace SkylinesOverwatch
 {
     public class VehiclePrefabMapping
     {
-        private Settings _settings;
-        private Helper _helper;
-        private Data _data;
-
         private PrefabMapping<ushort> _mapping;
 
         public VehiclePrefabMapping()
         {
-            _settings = Settings.Instance;
-            _helper = Helper.Instance;
-            _data = Data.Instance;
-
             _mapping = new PrefabMapping<ushort>();
         }
 
@@ -42,48 +26,48 @@ namespace SkylinesOverwatch
             VehicleAI ai = vehicle.m_vehicleAI;
             int prefabID = vehicle.m_prefabDataIndex;
 
-            _mapping.AddMapping(prefabID, _data._Vehicles);
+            _mapping.AddMapping(prefabID, Data.Instance._Vehicles);
 
             if (ai is CarTrailerAI)
                 return;
             else if (ai is CarAI)
             {
-                _mapping.AddMapping(prefabID, _data._Cars);
+                _mapping.AddMapping(prefabID, Data.Instance._Cars);
 
                 if (ai is HearseAI)
-                    _mapping.AddMapping(prefabID, _data._Hearses);
+                    _mapping.AddMapping(prefabID, Data.Instance._Hearses);
                 else if (ai is GarbageTruckAI)
-                    _mapping.AddMapping(prefabID, _data._GarbageTrucks);
+                    _mapping.AddMapping(prefabID, Data.Instance._GarbageTrucks);
                 else if (ai is FireTruckAI)
-                    _mapping.AddMapping(prefabID, _data._FireTrucks);
+                    _mapping.AddMapping(prefabID, Data.Instance._FireTrucks);
                 else if (ai is PoliceCarAI)
-                    _mapping.AddMapping(prefabID, _data._PoliceCars);
+                    _mapping.AddMapping(prefabID, Data.Instance._PoliceCars);
                 else if (ai is AmbulanceAI)
-                    _mapping.AddMapping(prefabID, _data._Ambulances);
+                    _mapping.AddMapping(prefabID, Data.Instance._Ambulances);
                 else if (ai is BusAI)
-                    _mapping.AddMapping(prefabID, _data._Buses);
+                    _mapping.AddMapping(prefabID, Data.Instance._Buses);
                 else
-                    _mapping.AddMapping(prefabID, _data._CarOther);
+                    _mapping.AddMapping(prefabID, Data.Instance._CarOther);
             }
             else if (ai is TrainAI)
             {
-                _mapping.AddMapping(prefabID, _data._Trains);
+                _mapping.AddMapping(prefabID, Data.Instance._Trains);
 
                 if (ai is MetroTrainAI)
-                    _mapping.AddMapping(prefabID, _data._MetroTrains);
+                    _mapping.AddMapping(prefabID, Data.Instance._MetroTrains);
                 else if (ai is PassengerTrainAI)
-                    _mapping.AddMapping(prefabID, _data._PassengerTrains);
+                    _mapping.AddMapping(prefabID, Data.Instance._PassengerTrains);
                 else if (ai is CargoTrainAI)
-                    _mapping.AddMapping(prefabID, _data._CargoTrains);
+                    _mapping.AddMapping(prefabID, Data.Instance._CargoTrains);
                 else
-                    _mapping.AddMapping(prefabID, _data._TrainOther);
+                    _mapping.AddMapping(prefabID, Data.Instance._TrainOther);
             }
             else if (ai is AircraftAI)
-                _mapping.AddMapping(prefabID, _data._Aircraft);
+                _mapping.AddMapping(prefabID, Data.Instance._Aircraft);
             else if (ai is ShipAI)
-                _mapping.AddMapping(prefabID, _data._Ships);
+                _mapping.AddMapping(prefabID, Data.Instance._Ships);
             else
-                _mapping.AddMapping(prefabID, _data._VehicleOther);
+                _mapping.AddMapping(prefabID, Data.Instance._VehicleOther);
         }
     }
 }

@@ -7,10 +7,6 @@ namespace SkylinesOverwatch
 {
     public class AnimalMonitor : ThreadingExtensionBase
     {
-        private Settings _settings;
-        private Helper _helper;
-        private Data _data;
-
         private AnimalPrefabMapping _mapping;
 
         private Dictionary<ushort, HashSet<ushort>> _buildingsAnimals;
@@ -18,8 +14,7 @@ namespace SkylinesOverwatch
         private bool _initialized;
         private bool _terminated;
         private bool _paused;
-
-        private CitizenManager _instance;
+        
         private int _capacity;
 
         private CitizenInstance _animal;
@@ -28,9 +23,6 @@ namespace SkylinesOverwatch
 
         public override void OnCreated(IThreading threading)
         {
-            _settings = Settings.Instance;
-            _helper = Helper.Instance;
-
             _initialized = false;
             _terminated = false;
 
@@ -41,7 +33,7 @@ namespace SkylinesOverwatch
         {
             if (_terminated) return;
 
-            if (!_helper.AnimalMonitorSpun)
+            if (!Helper.Instance.AnimalMonitorSpun)
             {
                 _initialized = false;
                 return;
@@ -79,24 +71,21 @@ namespace SkylinesOverwatch
         {
             if (_terminated) return;
 
-            if (!_helper.AnimalMonitorSpinnable) return;
+            if (!Helper.Instance.AnimalMonitorSpinnable) return;
 
-            if (!_settings.Enable._AnimalMonitor) return;
+            if (!Settings.Instance.Enable._AnimalMonitor) return;
 
             try
             {
                 if (!_initialized)
                 {
-                    _data = Data.Instance;
-
                     _mapping = new AnimalPrefabMapping();
 
                     _buildingsAnimals = new Dictionary<ushort, HashSet<ushort>>();
 
                     _paused = false;
-
-                    _instance = Singleton<CitizenManager>.instance;
-                    _capacity = _instance.m_instances.m_buffer.Length;
+                    
+                    _capacity = Singleton<CitizenManager>.instance.m_instances.m_buffer.Length;
 
                     _id = (ushort)_capacity;
 
@@ -104,17 +93,17 @@ namespace SkylinesOverwatch
                         UpdateAnimal((ushort)i);
 
                     _initialized = true;
-                    _helper.AnimalMonitorSpun = true;
-                    _helper.AnimalMonitor = this;
+                    Helper.Instance.AnimalMonitorSpun = true;
+                    Helper.Instance.AnimalMonitor = this;
 
-                    _helper.NotifyPlayer("Animal monitor initialized");
+                    Helper.Instance.NotifyPlayer("Animal monitor initialized");
                 }
-                else if (_data.BuildingsUpdated.Length > 0)
+                else if (Data.Instance.BuildingsUpdated.Length > 0)
                 {
-                    _data._AnimalsUpdated.Clear();
-                    _data._AnimalsRemoved.Clear();
+                    Data.Instance._AnimalsUpdated.Clear();
+                    Data.Instance._AnimalsRemoved.Clear();
 
-                    foreach (ushort building in _data._BuildingsUpdated)
+                    foreach (ushort building in Data.Instance._BuildingsUpdated)
                     {
                         ushort id = Singleton<BuildingManager>.instance.m_buildings.m_buffer[building].m_targetCitizens;
 
@@ -122,24 +111,24 @@ namespace SkylinesOverwatch
                         {
                             if (UpdateAnimal(id))
                             {
-                                _data._AnimalsUpdated.Add(id);
+                                Data.Instance._AnimalsUpdated.Add(id);
                                 AddBuildingsAnimal(building, id);
                             }
                             else
                             {
-                                _data._AnimalsRemoved.Add(id);
+                                Data.Instance._AnimalsRemoved.Add(id);
 
-                                if (_data._Animals.Contains(id))
+                                if (Data.Instance._Animals.Contains(id))
                                     RemoveAnimal(id);
                             }
 
-                            id = _instance.m_instances.m_buffer[(int)id].m_nextTargetInstance;
+                            id = Singleton<CitizenManager>.instance.m_instances.m_buffer[(int)id].m_nextTargetInstance;
                         }
 
                         CheckBuildingsAnimals(building);
                     }
 
-                    foreach (ushort building in _data._BuildingsRemoved)
+                    foreach (ushort building in Data.Instance._BuildingsRemoved)
                         RemoveBuildingsAnimals(building);
                 }
 
@@ -153,7 +142,7 @@ namespace SkylinesOverwatch
                 error += "==== STACK TRACE ====\r\n";
                 error += e.StackTrace;
 
-                _helper.Log(error);
+                Helper.Instance.Log(error);
 
                 _terminated = true;
             }
@@ -169,29 +158,29 @@ namespace SkylinesOverwatch
             _terminated = false;
             _paused = false;
 
-            _helper.AnimalMonitorSpun = false;
-            _helper.AnimalMonitor = null;
+            Helper.Instance.AnimalMonitorSpun = false;
+            Helper.Instance.AnimalMonitor = null;
 
-            if (_data != null)
+            if (Data.Instance != null)
             {
-                _data._Animals.Clear();
+                Data.Instance._Animals.Clear();
 
-                _data._Birds.Clear();
-                _data._Seagulls.Clear();
+                Data.Instance._Birds.Clear();
+                Data.Instance._Seagulls.Clear();
 
-                _data._Livestock.Clear();
-                _data._Cows.Clear();
-                _data._Pigs.Clear();
+                Data.Instance._Livestock.Clear();
+                Data.Instance._Cows.Clear();
+                Data.Instance._Pigs.Clear();
 
-                _data._Pets.Clear();
-                _data._Dogs.Clear();
+                Data.Instance._Pets.Clear();
+                Data.Instance._Dogs.Clear();
 
-                _data._Wildlife.Clear();
-                _data._Wolves.Clear();
-                _data._Bears.Clear();
-                _data._Moose.Clear();
+                Data.Instance._Wildlife.Clear();
+                Data.Instance._Wolves.Clear();
+                Data.Instance._Bears.Clear();
+                Data.Instance._Moose.Clear();
 
-                _data._AnimalOther.Clear();
+                Data.Instance._AnimalOther.Clear();
             }
 
             base.OnReleased();
@@ -222,7 +211,7 @@ namespace SkylinesOverwatch
 
             foreach (ushort animal in animals)
             {
-                if (_data._AnimalsUpdated.Contains(animal) || _data._AnimalsRemoved.Contains(animal))
+                if (Data.Instance._AnimalsUpdated.Contains(animal) || Data.Instance._AnimalsRemoved.Contains(animal))
                     continue;
 
                 removals.Add(animal);
@@ -232,7 +221,7 @@ namespace SkylinesOverwatch
             {
                 animals.Remove(animal);
 
-                _data._AnimalsRemoved.Add(animal);
+                Data.Instance._AnimalsRemoved.Add(animal);
                 RemoveAnimal(animal);
             }
 
@@ -249,7 +238,7 @@ namespace SkylinesOverwatch
 
             foreach (ushort animal in animals)
             {
-                _data._AnimalsRemoved.Add(animal);
+                Data.Instance._AnimalsRemoved.Add(animal);
                 RemoveAnimal(animal);
             }
 
@@ -258,7 +247,7 @@ namespace SkylinesOverwatch
 
         private bool GetAnimal()
         {
-            _animal = _instance.m_instances.m_buffer[(int)_id];
+            _animal = Singleton<CitizenManager>.instance.m_instances.m_buffer[(int)_id];
 
             if (_animal.Info == null)
                 return false;
@@ -303,33 +292,33 @@ namespace SkylinesOverwatch
 
         private void RemoveAnimal(ushort id)
         {
-            _data._Animals.Remove(id);
+            Data.Instance._Animals.Remove(id);
 
-            _data._Birds.Remove(id);
-            _data._Seagulls.Remove(id);
+            Data.Instance._Birds.Remove(id);
+            Data.Instance._Seagulls.Remove(id);
 
-            _data._Livestock.Remove(id);
-            _data._Cows.Remove(id);
-            _data._Pigs.Remove(id);
+            Data.Instance._Livestock.Remove(id);
+            Data.Instance._Cows.Remove(id);
+            Data.Instance._Pigs.Remove(id);
 
-            _data._Pets.Remove(id);
-            _data._Dogs.Remove(id);
+            Data.Instance._Pets.Remove(id);
+            Data.Instance._Dogs.Remove(id);
 
-            _data._Wildlife.Remove(id);
-            _data._Wolves.Remove(id);
-            _data._Bears.Remove(id);
-            _data._Moose.Remove(id);
+            Data.Instance._Wildlife.Remove(id);
+            Data.Instance._Wolves.Remove(id);
+            Data.Instance._Bears.Remove(id);
+            Data.Instance._Moose.Remove(id);
 
-            _data._AnimalOther.Remove(id);
+            Data.Instance._AnimalOther.Remove(id);
         }
 
         private void OutputDebugLog()
         {
-            if (!_helper.AnimalMonitorSpun) return;
+            if (!Helper.Instance.AnimalMonitorSpun) return;
 
-            if (!_settings.Debug._AnimalMonitor) return;
+            if (!Settings.Instance.Debug._AnimalMonitor) return;
 
-            if (!_settings.Enable._AnimalMonitor) return;
+            if (!Settings.Instance.Enable._AnimalMonitor) return;
 
             if (!_initialized) return;
 
@@ -340,29 +329,29 @@ namespace SkylinesOverwatch
             string log = "\r\n";
             log += "==== ANIMALS ====\r\n";
             log += "\r\n";
-            log += String.Format("{0}   Total\r\n", _data._Animals.Count);
-            log += String.Format("{0}   Updated\r\n", _data._AnimalsUpdated.Count);
-            log += String.Format("{0}   Removed\r\n", _data._AnimalsRemoved.Count);
+            log += String.Format("{0}   Total\r\n", Data.Instance._Animals.Count);
+            log += String.Format("{0}   Updated\r\n", Data.Instance._AnimalsUpdated.Count);
+            log += String.Format("{0}   Removed\r\n", Data.Instance._AnimalsRemoved.Count);
             log += "\r\n";
-            log += String.Format("{0}   Bird(s)\r\n", _data._Birds.Count);
-            log += String.Format(" =>   {0}   Seagull(s)\r\n", _data._Seagulls.Count);
+            log += String.Format("{0}   Bird(s)\r\n", Data.Instance._Birds.Count);
+            log += String.Format(" =>   {0}   Seagull(s)\r\n", Data.Instance._Seagulls.Count);
             log += "\r\n";
-            log += String.Format("{0}   Livestock\r\n", _data._Livestock.Count);
-            log += String.Format(" =>   {0}   Cow(s)\r\n", _data._Cows.Count);
-            log += String.Format(" =>   {0}   Pig(s)\r\n", _data._Pigs.Count);
+            log += String.Format("{0}   Livestock\r\n", Data.Instance._Livestock.Count);
+            log += String.Format(" =>   {0}   Cow(s)\r\n", Data.Instance._Cows.Count);
+            log += String.Format(" =>   {0}   Pig(s)\r\n", Data.Instance._Pigs.Count);
             log += "\r\n";
-            log += String.Format("{0}   Pet(s)\r\n", _data._Pets.Count);
-            log += String.Format(" =>   {0}   Dog(s)\r\n", _data._Dogs.Count);
+            log += String.Format("{0}   Pet(s)\r\n", Data.Instance._Pets.Count);
+            log += String.Format(" =>   {0}   Dog(s)\r\n", Data.Instance._Dogs.Count);
             log += "\r\n";
-            log += String.Format("{0}   Wildlife\r\n", _data._Wildlife.Count);
-            log += String.Format(" =>   {0}   Wolf(s)\r\n", _data._Wolves.Count);
-            log += String.Format(" =>   {0}   Bear(s)\r\n", _data._Bears.Count);
-            log += String.Format(" =>   {0}   Moose\r\n", _data._Moose.Count);
+            log += String.Format("{0}   Wildlife\r\n", Data.Instance._Wildlife.Count);
+            log += String.Format(" =>   {0}   Wolf(s)\r\n", Data.Instance._Wolves.Count);
+            log += String.Format(" =>   {0}   Bear(s)\r\n", Data.Instance._Bears.Count);
+            log += String.Format(" =>   {0}   Moose\r\n", Data.Instance._Moose.Count);
             log += "\r\n";
-            log += String.Format("{0}   Other\r\n", _data._AnimalOther.Count);
+            log += String.Format("{0}   Other\r\n", Data.Instance._AnimalOther.Count);
             log += "\r\n";
 
-            _helper.Log(log);
+            Helper.Instance.Log(log);
 
             _paused = true;
         }

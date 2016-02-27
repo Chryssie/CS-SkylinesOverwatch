@@ -1,29 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-
+﻿using ColossalFramework;
 using ICities;
-using ColossalFramework;
-using ColossalFramework.Math;
-using ColossalFramework.UI;
-using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 namespace SkylinesOverwatch
 {
     public class BuildingMonitor : ThreadingExtensionBase
     {
-        private Settings _settings;
-        private Helper _helper;
-        private Data _data;
-
         private BuildingPrefabMapping _mapping;
 
         private bool _initialized;
         private bool _terminated;
         private bool _paused;
         private int _lastProcessedFrame;
-
-        private BuildingManager _instance;
+        
         private int _capacity;
 
         private Building _building;
@@ -35,9 +25,6 @@ namespace SkylinesOverwatch
 
         public override void OnCreated(IThreading threading)
         {
-            _settings = Settings.Instance;
-            _helper = Helper.Instance;
-
             _initialized = false;
             _terminated = false;
 
@@ -58,21 +45,21 @@ namespace SkylinesOverwatch
         {
             if (_terminated) return;
 
-            if (!_helper.BuildingMonitorSpun)
+            if (!Helper.Instance.BuildingMonitorSpun)
             {
                 _initialized = false;
                 return;
             }
 
-            if (!_settings.Enable._BuildingMonitor) return;
+            if (!Settings.Instance.Enable._BuildingMonitor) return;
 
             if (!_initialized) return;
 
-            if (!_instance.m_buildingsUpdated) return;
+            if (!Singleton<BuildingManager>.instance.m_buildingsUpdated) return;
 
-            for (int i = 0; i < _instance.m_updatedBuildings.Length; i++)
+            for (int i = 0; i < Singleton<BuildingManager>.instance.m_updatedBuildings.Length; i++)
             {
-                ulong ub = _instance.m_updatedBuildings[i];
+                ulong ub = Singleton<BuildingManager>.instance.m_updatedBuildings[i];
 
                 if (ub != 0)
                 {
@@ -123,22 +110,19 @@ namespace SkylinesOverwatch
         {
             if (_terminated) return;
 
-            if (!_helper.BuildingMonitorSpinnable) return;
+            if (!Helper.Instance.BuildingMonitorSpinnable) return;
 
-            if (!_settings.Enable._BuildingMonitor) return;
+            if (!Settings.Instance.Enable._BuildingMonitor) return;
 
             try
             {
                 if (!_initialized)
                 {
-                    _data = Data.Instance;
-
                     _mapping = new BuildingPrefabMapping();
 
                     _paused = false;
-
-                    _instance = Singleton<BuildingManager>.instance;
-                    _capacity = _instance.m_buildings.m_buffer.Length;
+                    
+                    _capacity = Singleton<BuildingManager>.instance.m_buildings.m_buffer.Length;
 
                     _id = (ushort)_capacity;
 
@@ -154,24 +138,24 @@ namespace SkylinesOverwatch
                     _lastProcessedFrame = GetFrame();
 
                     _initialized = true;
-                    _helper.BuildingMonitorSpun = true;
-                    _helper.BuildingMonitor = this;
+                    Helper.Instance.BuildingMonitorSpun = true;
+                    Helper.Instance.BuildingMonitor = this;
 
-                    _helper.NotifyPlayer("Building monitor initialized");
+                    Helper.Instance.NotifyPlayer("Building monitor initialized");
                 }
                 else if (!SimulationManager.instance.SimulationPaused)
                 {
-                    _data._BuildingsAdded.Clear();
-                    _data._BuildingsUpdated.Clear();
-                    _data._BuildingsRemoved.Clear();
+                    Data.Instance._BuildingsAdded.Clear();
+                    Data.Instance._BuildingsUpdated.Clear();
+                    Data.Instance._BuildingsRemoved.Clear();
 
                     foreach (ushort i in _added)
-                        _data._BuildingsAdded.Add(i);
+                        Data.Instance._BuildingsAdded.Add(i);
 
                     _added.Clear();
 
                     foreach (ushort i in _removed)
-                        _data._BuildingsRemoved.Add(i);
+                        Data.Instance._BuildingsRemoved.Add(i);
 
                     _removed.Clear();
 
@@ -189,10 +173,10 @@ namespace SkylinesOverwatch
                             id = (ushort)i;
 
                             if (UpdateBuilding(id))
-                                _data._BuildingsUpdated.Add(id);
-                            else if (_data._Buildings.Contains(id))
+                                Data.Instance._BuildingsUpdated.Add(id);
+                            else if (Data.Instance._Buildings.Contains(id))
                             {
-                                _data._BuildingsRemoved.Add(id);
+                                Data.Instance._BuildingsRemoved.Add(id);
                                 RemoveBuilding(id);
                             }
                         }
@@ -209,7 +193,7 @@ namespace SkylinesOverwatch
                 error += "==== STACK TRACE ====\r\n";
                 error += e.StackTrace;
 
-                _helper.Log(error);
+                Helper.Instance.Log(error);
 
                 _terminated = true;
             }
@@ -223,44 +207,44 @@ namespace SkylinesOverwatch
             _terminated = false;
             _paused = false;
 
-            _helper.BuildingMonitorSpun = false;
-            _helper.BuildingMonitor = null;
+            Helper.Instance.BuildingMonitorSpun = false;
+            Helper.Instance.BuildingMonitor = null;
 
-            if (_data != null)
+            if (Data.Instance != null)
             {
-                _data._Buildings.Clear();
+                Data.Instance._Buildings.Clear();
 
-                _data._PlayerBuildings.Clear();
-                _data._Cemeteries.Clear();
-                _data._LandfillSites.Clear();
-                _data._FireStations.Clear();
-                _data._PoliceStations.Clear();
-                _data._Hospitals.Clear();
-                _data._Parks.Clear();
-                _data._PowerPlants.Clear();
-                _data._PlayerOther.Clear();
+                Data.Instance._PlayerBuildings.Clear();
+                Data.Instance._Cemeteries.Clear();
+                Data.Instance._LandfillSites.Clear();
+                Data.Instance._FireStations.Clear();
+                Data.Instance._PoliceStations.Clear();
+                Data.Instance._Hospitals.Clear();
+                Data.Instance._Parks.Clear();
+                Data.Instance._PowerPlants.Clear();
+                Data.Instance._PlayerOther.Clear();
 
-                _data._PrivateBuildings.Clear();
-                _data._ResidentialBuildings.Clear();
-                _data._CommercialBuildings.Clear();
-                _data._IndustrialBuildings.Clear();
-                _data._OfficeBuildings.Clear();
-                _data._PrivateOther.Clear();
+                Data.Instance._PrivateBuildings.Clear();
+                Data.Instance._ResidentialBuildings.Clear();
+                Data.Instance._CommercialBuildings.Clear();
+                Data.Instance._IndustrialBuildings.Clear();
+                Data.Instance._OfficeBuildings.Clear();
+                Data.Instance._PrivateOther.Clear();
 
-                _data._BuildingOther.Clear();
+                Data.Instance._BuildingOther.Clear();
 
-                _data._BuildingsAbandoned.Clear();
-                _data._BuildingsBurnedDown.Clear();
+                Data.Instance._BuildingsAbandoned.Clear();
+                Data.Instance._BuildingsBurnedDown.Clear();
 
-                _data._BuildingsWithFire.Clear();
-                _data._BuildingsWithCrime.Clear();
-                _data._BuildingsWithSick.Clear();
-                _data._BuildingsWithDead.Clear();
-                _data._BuildingsWithGarbage.Clear();
+                Data.Instance._BuildingsWithFire.Clear();
+                Data.Instance._BuildingsWithCrime.Clear();
+                Data.Instance._BuildingsWithSick.Clear();
+                Data.Instance._BuildingsWithDead.Clear();
+                Data.Instance._BuildingsWithGarbage.Clear();
 
-                _data._BuildingsCapacityFull.Clear();
-                _data._BuildingsCapacityStep1.Clear();
-                _data._BuildingsCapacityStep2.Clear();
+                Data.Instance._BuildingsCapacityFull.Clear();
+                Data.Instance._BuildingsCapacityStep1.Clear();
+                Data.Instance._BuildingsCapacityStep2.Clear();
             }
 
             base.OnReleased();
@@ -297,7 +281,7 @@ namespace SkylinesOverwatch
 
         private bool GetBuilding()
         {
-            _building = _instance.m_buildings.m_buffer[(int)_id];
+            _building = Singleton<BuildingManager>.instance.m_buildings.m_buffer[(int)_id];
 
             if (_building.Info == null)
                 return false;
@@ -310,7 +294,7 @@ namespace SkylinesOverwatch
 
         private bool ProcessBuilding(ushort id)
         {
-            if (_data._Buildings.Contains(id))
+            if (Data.Instance._Buildings.Contains(id))
                 RemoveBuilding(id);
 
             _id = id;
@@ -343,28 +327,28 @@ namespace SkylinesOverwatch
         {
             if (CheckAbandoned())
             {
-                _data._BuildingsWithDead.Remove(_id);
-                _data._BuildingsWithGarbage.Remove(_id);
-                _data._BuildingsWithFire.Remove(_id);
-                _data._BuildingsWithCrime.Remove(_id);
-                _data._BuildingsWithSick.Remove(_id);
+                Data.Instance._BuildingsWithDead.Remove(_id);
+                Data.Instance._BuildingsWithGarbage.Remove(_id);
+                Data.Instance._BuildingsWithFire.Remove(_id);
+                Data.Instance._BuildingsWithCrime.Remove(_id);
+                Data.Instance._BuildingsWithSick.Remove(_id);
 
-                _data._BuildingsCapacityStep1.Remove(_id);
-                _data._BuildingsCapacityStep2.Remove(_id);
-                _data._BuildingsCapacityFull.Remove(_id);
+                Data.Instance._BuildingsCapacityStep1.Remove(_id);
+                Data.Instance._BuildingsCapacityStep2.Remove(_id);
+                Data.Instance._BuildingsCapacityFull.Remove(_id);
             }
             else if (CheckBurnedDown())
             {
-                _data._BuildingsWithDead.Remove(_id);
-                _data._BuildingsWithGarbage.Remove(_id);
-                _data._BuildingsWithFire.Remove(_id);
-                _data._BuildingsWithCrime.Remove(_id);
-                _data._BuildingsWithSick.Remove(_id);
-                _data._BuildingsAbandoned.Remove(_id);
+                Data.Instance._BuildingsWithDead.Remove(_id);
+                Data.Instance._BuildingsWithGarbage.Remove(_id);
+                Data.Instance._BuildingsWithFire.Remove(_id);
+                Data.Instance._BuildingsWithCrime.Remove(_id);
+                Data.Instance._BuildingsWithSick.Remove(_id);
+                Data.Instance._BuildingsAbandoned.Remove(_id);
 
-                _data._BuildingsCapacityStep1.Remove(_id);
-                _data._BuildingsCapacityStep2.Remove(_id);
-                _data._BuildingsCapacityFull.Remove(_id);
+                Data.Instance._BuildingsCapacityStep1.Remove(_id);
+                Data.Instance._BuildingsCapacityStep2.Remove(_id);
+                Data.Instance._BuildingsCapacityFull.Remove(_id);
             }
             else
             {
@@ -392,39 +376,39 @@ namespace SkylinesOverwatch
 
         private void RemoveBuilding(ushort id)
         {
-            _data._Buildings.Remove(id);
+            Data.Instance._Buildings.Remove(id);
 
-            _data._PlayerBuildings.Remove(id);
-            _data._Cemeteries.Remove(id);
-            _data._LandfillSites.Remove(id);
-            _data._FireStations.Remove(id);
-            _data._PoliceStations.Remove(id);
-            _data._Hospitals.Remove(id);
-            _data._Parks.Remove(id);
-            _data._PowerPlants.Remove(id);
-            _data._PlayerOther.Remove(id);
+            Data.Instance._PlayerBuildings.Remove(id);
+            Data.Instance._Cemeteries.Remove(id);
+            Data.Instance._LandfillSites.Remove(id);
+            Data.Instance._FireStations.Remove(id);
+            Data.Instance._PoliceStations.Remove(id);
+            Data.Instance._Hospitals.Remove(id);
+            Data.Instance._Parks.Remove(id);
+            Data.Instance._PowerPlants.Remove(id);
+            Data.Instance._PlayerOther.Remove(id);
 
-            _data._PrivateBuildings.Remove(id);
-            _data._ResidentialBuildings.Remove(id);
-            _data._CommercialBuildings.Remove(id);
-            _data._IndustrialBuildings.Remove(id);
-            _data._OfficeBuildings.Remove(id);
-            _data._PrivateOther.Remove(id);
+            Data.Instance._PrivateBuildings.Remove(id);
+            Data.Instance._ResidentialBuildings.Remove(id);
+            Data.Instance._CommercialBuildings.Remove(id);
+            Data.Instance._IndustrialBuildings.Remove(id);
+            Data.Instance._OfficeBuildings.Remove(id);
+            Data.Instance._PrivateOther.Remove(id);
 
-            _data._BuildingOther.Remove(id);
+            Data.Instance._BuildingOther.Remove(id);
 
-            _data._BuildingsAbandoned.Remove(id);
-            _data._BuildingsBurnedDown.Remove(id);
+            Data.Instance._BuildingsAbandoned.Remove(id);
+            Data.Instance._BuildingsBurnedDown.Remove(id);
 
-            _data._BuildingsWithDead.Remove(id);
-            _data._BuildingsWithGarbage.Remove(id);
-            _data._BuildingsWithFire.Remove(id);
-            _data._BuildingsWithCrime.Remove(id);
-            _data._BuildingsWithSick.Remove(id);
+            Data.Instance._BuildingsWithDead.Remove(id);
+            Data.Instance._BuildingsWithGarbage.Remove(id);
+            Data.Instance._BuildingsWithFire.Remove(id);
+            Data.Instance._BuildingsWithCrime.Remove(id);
+            Data.Instance._BuildingsWithSick.Remove(id);
 
-            _data._BuildingsCapacityStep1.Remove(id);
-            _data._BuildingsCapacityStep2.Remove(id);
-            _data._BuildingsCapacityFull.Remove(id);
+            Data.Instance._BuildingsCapacityStep1.Remove(id);
+            Data.Instance._BuildingsCapacityStep2.Remove(id);
+            Data.Instance._BuildingsCapacityFull.Remove(id);
         }
 
         private bool Check(Building.Flags problems, HashSet<ushort> category)
@@ -459,77 +443,77 @@ namespace SkylinesOverwatch
         {
             if (_building.m_deathProblemTimer > 0)
             {
-                _data._BuildingsWithDead.Add(_id);
+                Data.Instance._BuildingsWithDead.Add(_id);
                 return true;
             }
             else
             {
-                _data._BuildingsWithDead.Remove(_id);
+                Data.Instance._BuildingsWithDead.Remove(_id);
                 return false;
             }
         }
 
         private bool CheckAbandoned()
         {
-            return Check(Building.Flags.Abandoned, _data._BuildingsAbandoned);
+            return Check(Building.Flags.Abandoned, Data.Instance._BuildingsAbandoned);
         }
 
         private bool CheckBurnedDown()
         {
-            return Check(Building.Flags.BurnedDown, _data._BuildingsBurnedDown);
+            return Check(Building.Flags.BurnedDown, Data.Instance._BuildingsBurnedDown);
         }
 
         private bool CheckGarbage()
         {
             if (_building.Info.m_buildingAI.GetGarbageAmount(_id, ref _building) > 2500 && !(_building.Info.m_buildingAI is LandfillSiteAI))
             {
-                _data._BuildingsWithGarbage.Add(_id);
+                Data.Instance._BuildingsWithGarbage.Add(_id);
                 return true;
             }
             else
             {
-                _data._BuildingsWithGarbage.Remove(_id);
+                Data.Instance._BuildingsWithGarbage.Remove(_id);
                 return false;
             }
         }
 
         private bool CheckFire()
         {
-            return Check(Notification.Problem.Fire, _data._BuildingsWithFire);
+            return Check(Notification.Problem.Fire, Data.Instance._BuildingsWithFire);
         }
 
         private bool CheckCrime()
         {
-            return Check(Notification.Problem.Crime, _data._BuildingsWithCrime);
+            return Check(Notification.Problem.Crime, Data.Instance._BuildingsWithCrime);
         }
 
         private bool CheckSick()
         {
-            return Check(Notification.Problem.DirtyWater | Notification.Problem.Pollution | Notification.Problem.Noise, _data._BuildingsWithSick);
+            return Check(Notification.Problem.DirtyWater | Notification.Problem.Pollution | Notification.Problem.Noise, Data.Instance._BuildingsWithSick);
         }
 
         private bool CheckCapacityStep1()
         {
-            return Check(Building.Flags.CapacityStep1, _data._BuildingsCapacityStep1);
+            return Check(Building.Flags.CapacityStep1, Data.Instance._BuildingsCapacityStep1);
         }
 
         private bool CheckCapacityStep2()
         {
-            return Check(Building.Flags.CapacityStep2, _data._BuildingsCapacityStep2);
+            return Check(Building.Flags.CapacityStep2, Data.Instance._BuildingsCapacityStep2);
         }
 
         private bool CheckCapacityFull()
         {
-            return Check(Building.Flags.CapacityFull, _data._BuildingsCapacityFull);
+            return Check(Building.Flags.CapacityFull, Data.Instance._BuildingsCapacityFull);
         }
 
         private void OutputDebugLog()
         {
-            if (!_helper.BuildingMonitorSpun) return;
+            if (!Helper.Instance.BuildingMonitorSpun) return;
 
-            if (!_settings.Debug._BuildingMonitor) return;
+            if (!Settings.Instance.Debug._BuildingMonitor) return;
 
-            if (!_settings.Enable._BuildingMonitor) return;
+            if (!Settings.Instance.Enable._BuildingMonitor) return;
 
             if (!_initialized) return;
 
@@ -540,45 +524,45 @@ namespace SkylinesOverwatch
             string log = "\r\n";
             log += "==== BUILDINGS ====\r\n";
             log += "\r\n";
-            log += String.Format("{0}   Total\r\n", _data._Buildings.Count);
-            log += String.Format("{0}   Added\r\n", _data._BuildingsAdded.Count);
-            log += String.Format("{0}   Updated\r\n", _data._BuildingsUpdated.Count);
-            log += String.Format("{0}   Removed\r\n", _data._BuildingsRemoved.Count);
+            log += String.Format("{0}   Total\r\n", Data.Instance._Buildings.Count);
+            log += String.Format("{0}   Added\r\n", Data.Instance._BuildingsAdded.Count);
+            log += String.Format("{0}   Updated\r\n", Data.Instance._BuildingsUpdated.Count);
+            log += String.Format("{0}   Removed\r\n", Data.Instance._BuildingsRemoved.Count);
             log += "\r\n";
-            log += String.Format("{0}   Player Building(s)\r\n", _data._PlayerBuildings.Count);
-            log += String.Format(" =>   {0}   Cemetery(s)\r\n", _data._Cemeteries.Count);
-            log += String.Format(" =>   {0}   LandfillSite(s)\r\n", _data._LandfillSites.Count);
-            log += String.Format(" =>   {0}   FireStation(s)\r\n", _data._FireStations.Count);
-            log += String.Format(" =>   {0}   PoliceStation(s)\r\n", _data._PoliceStations.Count);
-            log += String.Format(" =>   {0}   Hospital(s)\r\n", _data._Hospitals.Count);
-            log += String.Format(" =>   {0}   Park(s)\r\n", _data._Parks.Count);
-            log += String.Format(" =>   {0}   PowerPlant(s)\r\n", _data._PowerPlants.Count);
-            log += String.Format(" =>   {0}   Other\r\n", _data._PlayerOther.Count);
+            log += String.Format("{0}   Player Building(s)\r\n", Data.Instance._PlayerBuildings.Count);
+            log += String.Format(" =>   {0}   Cemetery(s)\r\n", Data.Instance._Cemeteries.Count);
+            log += String.Format(" =>   {0}   LandfillSite(s)\r\n", Data.Instance._LandfillSites.Count);
+            log += String.Format(" =>   {0}   FireStation(s)\r\n", Data.Instance._FireStations.Count);
+            log += String.Format(" =>   {0}   PoliceStation(s)\r\n", Data.Instance._PoliceStations.Count);
+            log += String.Format(" =>   {0}   Hospital(s)\r\n", Data.Instance._Hospitals.Count);
+            log += String.Format(" =>   {0}   Park(s)\r\n", Data.Instance._Parks.Count);
+            log += String.Format(" =>   {0}   PowerPlant(s)\r\n", Data.Instance._PowerPlants.Count);
+            log += String.Format(" =>   {0}   Other\r\n", Data.Instance._PlayerOther.Count);
             log += "\r\n";
-            log += String.Format("{0}   Private Building(s)\r\n", _data._PrivateBuildings.Count);
-            log += String.Format(" =>   {0}   Residential\r\n", _data._ResidentialBuildings.Count);
-            log += String.Format(" =>   {0}   Commercial\r\n", _data._CommercialBuildings.Count);
-            log += String.Format(" =>   {0}   Industrial\r\n", _data._IndustrialBuildings.Count);
-            log += String.Format(" =>   {0}   Office(s)\r\n", _data._OfficeBuildings.Count);
-            log += String.Format(" =>   {0}   Other\r\n", _data._PrivateOther.Count);
+            log += String.Format("{0}   Private Building(s)\r\n", Data.Instance._PrivateBuildings.Count);
+            log += String.Format(" =>   {0}   Residential\r\n", Data.Instance._ResidentialBuildings.Count);
+            log += String.Format(" =>   {0}   Commercial\r\n", Data.Instance._CommercialBuildings.Count);
+            log += String.Format(" =>   {0}   Industrial\r\n", Data.Instance._IndustrialBuildings.Count);
+            log += String.Format(" =>   {0}   Office(s)\r\n", Data.Instance._OfficeBuildings.Count);
+            log += String.Format(" =>   {0}   Other\r\n", Data.Instance._PrivateOther.Count);
             log += "\r\n";
-            log += String.Format("{0}   Other Building(s)\r\n", _data._BuildingOther.Count);
+            log += String.Format("{0}   Other Building(s)\r\n", Data.Instance._BuildingOther.Count);
             log += "\r\n";
-            log += String.Format("{0}   Abandoned\r\n", _data._BuildingsAbandoned.Count);
-            log += String.Format("{0}   BurnedDown\r\n", _data._BuildingsBurnedDown.Count);
+            log += String.Format("{0}   Abandoned\r\n", Data.Instance._BuildingsAbandoned.Count);
+            log += String.Format("{0}   BurnedDown\r\n", Data.Instance._BuildingsBurnedDown.Count);
             log += "\r\n";
-            log += String.Format("{0}   w/Death\r\n", _data._BuildingsWithDead.Count);
-            log += String.Format("{0}   w/Garbage\r\n", _data._BuildingsWithGarbage.Count);
-            log += String.Format("{0}   w/Fire\r\n", _data._BuildingsWithFire.Count);
-            log += String.Format("{0}   w/Crime\r\n", _data._BuildingsWithCrime.Count);
-            log += String.Format("{0}   w/Illness\r\n", _data._BuildingsWithSick.Count);
+            log += String.Format("{0}   w/Death\r\n", Data.Instance._BuildingsWithDead.Count);
+            log += String.Format("{0}   w/Garbage\r\n", Data.Instance._BuildingsWithGarbage.Count);
+            log += String.Format("{0}   w/Fire\r\n", Data.Instance._BuildingsWithFire.Count);
+            log += String.Format("{0}   w/Crime\r\n", Data.Instance._BuildingsWithCrime.Count);
+            log += String.Format("{0}   w/Illness\r\n", Data.Instance._BuildingsWithSick.Count);
             log += "\r\n";
-            log += String.Format("{0}   CapacityStep1\r\n", _data._BuildingsCapacityStep1.Count);
-            log += String.Format("{0}   CapacityStep2\r\n", _data._BuildingsCapacityStep2.Count);
-            log += String.Format("{0}   CapacityFull\r\n", _data._BuildingsCapacityFull.Count);
+            log += String.Format("{0}   CapacityStep1\r\n", Data.Instance._BuildingsCapacityStep1.Count);
+            log += String.Format("{0}   CapacityStep2\r\n", Data.Instance._BuildingsCapacityStep2.Count);
+            log += String.Format("{0}   CapacityFull\r\n", Data.Instance._BuildingsCapacityFull.Count);
             log += "\r\n";
 
-            _helper.Log(log);
+            Helper.Instance.Log(log);
 
             _paused = true;
         }

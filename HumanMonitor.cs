@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-
+﻿using ColossalFramework;
 using ICities;
-using ColossalFramework;
-using ColossalFramework.Math;
-using ColossalFramework.UI;
-using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 namespace SkylinesOverwatch
 {
@@ -22,8 +17,7 @@ namespace SkylinesOverwatch
         private bool _terminated;
         private bool _paused;
         private int _lastProcessedFrame;
-
-        private CitizenManager _instance;
+        
         private int _capacity;
 
         private Citizen _human;
@@ -97,9 +91,8 @@ namespace SkylinesOverwatch
                     _mapping = new HumanPrefabMapping();
 
                     _paused = false;
-
-                    _instance = Singleton<CitizenManager>.instance;
-                    _capacity = _instance.m_citizens.m_buffer.Length;
+                    
+                    _capacity = Singleton<CitizenManager>.instance.m_citizens.m_buffer.Length;
 
                     _id = (uint)_capacity;
 
@@ -214,7 +207,7 @@ namespace SkylinesOverwatch
 
         private bool GetHuman()
         {
-            _human = _instance.m_citizens.m_buffer[(int)_id];
+            _human = Singleton<CitizenManager>.instance.m_citizens.m_buffer[(int)_id];
 
             if (_human.Dead)
                 return false;

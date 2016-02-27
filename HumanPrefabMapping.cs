@@ -1,29 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-
-using ICities;
-using ColossalFramework;
-using ColossalFramework.Math;
-using ColossalFramework.UI;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 namespace SkylinesOverwatch
 {
     public class HumanPrefabMapping
     {
-        private Settings _settings;
-        private Helper _helper;
-        private Data _data;
-
         private PrefabMapping<uint> _mapping;
 
         public HumanPrefabMapping()
         {
-            _settings = Settings.Instance;
-            _helper = Helper.Instance;
-            _data = Data.Instance;
-
             _mapping = new PrefabMapping<uint>();
         }
 
@@ -51,16 +35,16 @@ namespace SkylinesOverwatch
 
             if (ai is HumanAI)
             {
-                _mapping.AddMapping(prefabID, _data._Humans);
+                _mapping.AddMapping(prefabID, Data.Instance._Humans);
 
                 if (ai is ResidentAI)
-                    _mapping.AddMapping(prefabID, _data._Residents);
+                    _mapping.AddMapping(prefabID, Data.Instance._Residents);
                 else if (ai is ServicePersonAI)
-                    _mapping.AddMapping(prefabID, _data._ServicePersons);
+                    _mapping.AddMapping(prefabID, Data.Instance._ServicePersons);
                 else if (ai is TouristAI)
-                    _mapping.AddMapping(prefabID, _data._Tourists);
+                    _mapping.AddMapping(prefabID, Data.Instance._Tourists);
                 else
-                    _mapping.AddMapping(prefabID, _data._HumanOther);
+                    _mapping.AddMapping(prefabID, Data.Instance._HumanOther);
             }
         }
     }
