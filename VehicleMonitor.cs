@@ -212,7 +212,7 @@ namespace SkylinesOverwatch
             if (_vehicle.Info == null)
                 return false;
 
-            if ((_vehicle.m_flags & Vehicle.Flags.Spawned) == Vehicle.Flags.None)
+            if ((_vehicle.m_flags & Vehicle.Flags.Spawned) != Vehicle.Flags.Spawned)
                 return false;
 
             return true;
