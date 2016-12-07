@@ -1,7 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkylinesOverwatch", "SkylinesOverwatch.csproj", "{8C40A7D8-724B-40D9-A149-C938CB210E3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnhancedGarbageTruckAI", "..\CS-EnhancedGarbageTruckAI\EnhancedGarbageTruckAI.csproj", "{BE6D0DB2-FC6F-4B42-BAA2-D8107ADD1BE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoveStuckVehicles", "..\CS-RemoveStuckVehicles\RemoveStuckVehicles.csproj", "{FE255200-F5CB-490D-B608-32A58FA27406}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoveSeagulls", "..\CS-RemoveSeagulls\RemoveSeagulls.csproj", "{D23967C5-1F61-4E44-A75E-443E3C6FB791}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemovePigs", "..\CS-RemovePigs\RemovePigs.csproj", "{8D65C396-493D-459D-87AE-BFEE147F4D99}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoveCows", "..\CS-RemoveCows\RemoveCows.csproj", "{DFD9B136-6555-44BF-AF33-DCB2CFDB68D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnhancedHearseAI", "..\CS-EnhancedHearseAI\EnhancedHearseAI.csproj", "{88F7949E-8767-4CC7-B2B9-BE991ECBDCCD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarlyDeath", "..\CS-EarlyDeath\EarlyDeath.csproj", "{DDBDF5CF-1A8D-4340-A4BD-0A3C5336C9D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,10 +29,41 @@ Global
 		{8C40A7D8-724B-40D9-A149-C938CB210E3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C40A7D8-724B-40D9-A149-C938CB210E3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C40A7D8-724B-40D9-A149-C938CB210E3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE6D0DB2-FC6F-4B42-BAA2-D8107ADD1BE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE6D0DB2-FC6F-4B42-BAA2-D8107ADD1BE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE6D0DB2-FC6F-4B42-BAA2-D8107ADD1BE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE6D0DB2-FC6F-4B42-BAA2-D8107ADD1BE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE255200-F5CB-490D-B608-32A58FA27406}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE255200-F5CB-490D-B608-32A58FA27406}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE255200-F5CB-490D-B608-32A58FA27406}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE255200-F5CB-490D-B608-32A58FA27406}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D23967C5-1F61-4E44-A75E-443E3C6FB791}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D23967C5-1F61-4E44-A75E-443E3C6FB791}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D23967C5-1F61-4E44-A75E-443E3C6FB791}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D23967C5-1F61-4E44-A75E-443E3C6FB791}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D65C396-493D-459D-87AE-BFEE147F4D99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D65C396-493D-459D-87AE-BFEE147F4D99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D65C396-493D-459D-87AE-BFEE147F4D99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D65C396-493D-459D-87AE-BFEE147F4D99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFD9B136-6555-44BF-AF33-DCB2CFDB68D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFD9B136-6555-44BF-AF33-DCB2CFDB68D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFD9B136-6555-44BF-AF33-DCB2CFDB68D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFD9B136-6555-44BF-AF33-DCB2CFDB68D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88F7949E-8767-4CC7-B2B9-BE991ECBDCCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88F7949E-8767-4CC7-B2B9-BE991ECBDCCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88F7949E-8767-4CC7-B2B9-BE991ECBDCCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88F7949E-8767-4CC7-B2B9-BE991ECBDCCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDBDF5CF-1A8D-4340-A4BD-0A3C5336C9D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDBDF5CF-1A8D-4340-A4BD-0A3C5336C9D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDBDF5CF-1A8D-4340-A4BD-0A3C5336C9D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDBDF5CF-1A8D-4340-A4BD-0A3C5336C9D9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
-		$0.TextStylePolicy = $1
+		$0.TextStylePolicy = $3
 		$1.inheritsSet = null
 		$1.scope = text/x-csharp
 		$0.CSharpFormattingPolicy = $2
@@ -24,7 +71,6 @@ Global
 		$2.inheritsSet = Mono
 		$2.inheritsScope = text/x-csharp
 		$2.scope = text/x-csharp
-		$0.TextStylePolicy = $3
 		$3.FileWidth = 120
 		$3.inheritsSet = VisualStudio
 		$3.inheritsScope = text/plain
