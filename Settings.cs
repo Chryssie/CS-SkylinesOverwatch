@@ -6,7 +6,7 @@ namespace SkylinesOverwatch
     {
         private Settings()
         {
-            Tag = "Skylines Overwatch [Fixed for v1.3+]";
+            Tag = "Skylines Overwatch [Fixed for v1.6]";
 
             Animals = new HashSet<string>();
             Animals.Add("Seagull");
